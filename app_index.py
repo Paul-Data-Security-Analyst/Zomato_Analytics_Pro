@@ -13,9 +13,9 @@ app = Flask(__name__)
 def create_connection():
     return mysql.connector.connect(
         host="localhost",
-        user="your_username",
-        password="your_password",
-        database="zomato_db",
+        user="YOUR_USERNAME",
+        password="YOUR_PASSWORD",
+        database="YOUR_DATABASE",
         port=3306
     )
 
