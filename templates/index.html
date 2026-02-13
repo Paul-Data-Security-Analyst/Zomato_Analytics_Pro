@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Zomato Analytics Pro</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+:root {
+    --primary: #e23744;
+    --primary-dark: #c81d25;
+    --accent: #ff6b6b;
+    --bg: #f4f6fb;
+    --card: #ffffff;
+    --text-dark: #1e1e2f;
+    --text-light: #6b7280;
+    --radius-lg: 20px;
+    --radius-md: 14px;
+    --shadow-soft: 0 10px 30px rgba(0,0,0,0.08);
+    --shadow-hover: 0 20px 40px rgba(0,0,0,0.12);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #eef2f9, #f9fbff);
+    color: var(--text-dark);
+}
+
+header {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    padding: 28px;
+    text-align: center;
+    color: white;
+    box-shadow: var(--shadow-soft);
+}
+
+header h1 {
+    font-size: 34px;
+    font-weight: 700;
+}
+
+.container {
+    max-width: 1300px;
+    margin: 50px auto;
+    padding: 0 30px;
+    display: flex;
+    gap: 50px;
+    align-items: flex-start;
+}
+
+.dish-list {
+    flex: 2;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: 30px;
+}
+
+.food-card {
+    background: var(--card);
+    border-radius: var(--radius-lg);
+    padding: 22px;
+    box-shadow: var(--shadow-soft);
+    transition: 0.35s ease;
+}
+
+.food-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-hover);
+}
+
+.food-card img {
+    width: 100%;
+    height: 190px;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+    margin-bottom: 18px;
+}
+
+.food-card h3 {
+    font-size: 20px;
+    margin-bottom: 8px;
+}
+
+.food-card p {
+    color: var(--primary);
+    font-weight: 600;
+    margin-bottom: 18px;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    border-radius: 40px;
+    border: none;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s ease;
+    margin-bottom: 10px;
+}
+
+button:hover {
+    transform: scale(1.04);
+}
+
+.cart {
+    flex: 1;
+    background: rgba(255,255,255,0.95);
+    padding: 28px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+    position: sticky;
+    top: 40px;
+}
+
+.cart h3 {
+    margin-bottom: 15px;
+}
+
+#cart-list {
+    list-style: none;
+    margin-bottom: 15px;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    margin-bottom: 10px;
+    background: #f3f5fa;
+    border-radius: var(--radius-md);
+}
+
+.total {
+    font-weight: 700;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    border-radius: var(--radius-md);
+    border: 1px solid #ddd;
+    margin-bottom: 15px;
+}
+
+.analytics-section {
+    margin-top: 20px;
+    border-top: 1px solid #ddd;
+    padding-top: 15px;
+}
+
+.analytics-section h4 {
+    margin-bottom: 10px;
+    color: var(--primary-dark);
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1><i class="fa-solid fa-chart-line"></i> Zomato Analytics Pro</h1>
+</header>
+
+<div class="container">
+
+<div class="dish-list">
+
+<div class="food-card">
+<img src="{{ url_for('static', filename='images/briyani.png') }}">
+<h3>Briyani</h3>
+<p>₹150</p>
+<button onclick="addToCart(1, 'Briyani', 150)">
+<i class="fa-solid fa-cart-plus"></i> Add to Cart
+</button>
+</div>
+
+<div class="food-card">
+<img src="{{ url_for('static', filename='images/paneer_tikka.jpg') }}">
+<h3>Paneer</h3>
+<p>₹100</p>
+<button onclick="addToCart(2, 'Paneer', 100)">
+<i class="fa-solid fa-cart-plus"></i> Add to Cart
+</button>
+</div>
+
+<div class="food-card">
+<img src="{{ url_for('static', filename='images/butter_chicken.png') }}">
+<h3>Butter Chicken</h3>
+<p>₹200</p>
+<button onclick="addToCart(3, 'Butter Chicken', 200)">
+<i class="fa-solid fa-cart-plus"></i> Add to Cart
+</button>
+</div>
+
+</div>
+
+<div class="cart">
+<h3>Your Cart</h3>
+<ul id="cart-list"></ul>
+
+<div class="total">
+<span>Total:</span>
+<span id="total-price">₹0</span>
+</div>
+
+<input type="text" id="address" placeholder="Enter delivery address">
+
+<button onclick="placeOrder()">
+<i class="fa-solid fa-bag-shopping"></i> Place Order
+</button>
+
+<div class="analytics-section">
+<h4>Analytics Dashboard</h4>
+
+<button onclick="window.location.href='/analytics/revenue'">
+View Total Revenue
+</button>
+
+<button onclick="window.location.href='/analytics/top-item'">
+View Top Ordered Item
+</button>
+
+<button onclick="window.location.href='/analytics/daily-revenue'">
+View Daily Revenue (JSON)
+</button>
+
+<button onclick="window.location.href='/analytics/plot-revenue'">
+View Revenue Trend Chart
+</button>
+</div>
+
+</div>
+</div>
+
+<script>
+let cart = [];
+
+function addToCart(item_id, name, price) {
+    const existing = cart.find(item => item.item_id === item_id);
+
+    if (existing) {
+        existing.quantity++;
+    } else {
+        cart.push({ item_id, name, price, quantity: 1 });
+    }
+
+    updateCart();
+}
+
+function updateCart() {
+    const cartList = document.getElementById("cart-list");
+    const totalEl = document.getElementById("total-price");
+
+    cartList.innerHTML = "";
+    let total = 0;
+
+    cart.forEach(item => {
+        const li = document.createElement("li");
+        li.className = "cart-item";
+        li.innerHTML = `
+            <span>${item.name} x${item.quantity}</span>
+            <span>₹${item.price * item.quantity}</span>
+        `;
+        cartList.appendChild(li);
+        total += item.price * item.quantity;
+    });
+
+    totalEl.textContent = "₹" + total;
+}
+
+function placeOrder() {
+    const address = document.getElementById("address").value;
+
+    if (!address || cart.length === 0) {
+        alert("Add items and enter address.");
+        return;
+    }
+
+    fetch("/place_order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cart, address })
+    })
+    .then(res => res.json())
+    .then(data => {
+        alert("Order placed successfully!");
+        cart = [];
+        updateCart();
+        document.getElementById("address").value = "";
+    })
+    .catch(() => alert("Error placing order."));
+}
+</script>
+
+</body>
+</html>
